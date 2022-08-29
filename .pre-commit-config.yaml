@@ -1,0 +1,14 @@
+repos:
+  - repo: local
+    hooks:
+      - id: dart-format
+        name: dart-format
+        entry: dart format
+        types: [dart]
+        language: system
+
+      - id: dart-analyze
+        name: dart-analyze
+        entry: dart analyze
+        types: [dart]
+        language: system

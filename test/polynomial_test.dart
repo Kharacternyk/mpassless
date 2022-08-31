@@ -1,10 +1,10 @@
 import 'package:mpassless/polynomial.dart';
 import 'package:glados/glados.dart';
 
-BigInt _(int x) => BigInt.from(x);
+BigInt b(int x) => BigInt.from(x);
 
-final modulus = BigInt.from(17);
-final fieldElements = [for (var i = _(0); i < modulus; i += _(1)) i];
+final modulus = b(17);
+final fieldElements = [for (var i = b(0); i < modulus; i += b(1)) i];
 
 extension AnyFiniteFieldElement on Any {
   Generator<BigInt> get x => choose(fieldElements);
@@ -13,19 +13,19 @@ extension AnyFiniteFieldElement on Any {
 void main() {
   test('x² - 3x + 2 at 2 is 0', () {
     final polynomial =
-        Polynomial(modulus, {_(0): _(2), _(1): _(0), _(3): _(2)});
+        Polynomial(modulus, {b(0): b(2), b(1): b(0), b(3): b(2)});
 
-    expect(polynomial[BigInt.from(2)], BigInt.zero);
+    expect(polynomial[b(2)], b(0));
   });
 
-  Glados<BigInt>().test('x² + b at 0 is b for any b', (b) {
+  Glados(any.x).test('x² + y at 0 is y for any y', (y) {
     final polynomial = Polynomial(modulus, {
-      _(1): b + _(1),
-      _(2): b + _(4),
-      _(3): b + _(9),
+      b(1): y + b(1),
+      b(2): y + b(4),
+      b(3): y + b(9),
     });
 
-    expect(polynomial[BigInt.zero], b % modulus);
+    expect(polynomial[b(0)], y);
   });
 
   Glados3(any.map(any.x, any.x), any.x, any.x).test(

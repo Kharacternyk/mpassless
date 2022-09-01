@@ -1,43 +1,54 @@
 class StringIntegerBijection {
   final List<int> codeUnits;
-  final Map<int, int> codeUnitToIntegerMap;
+  final Map<int, int> codeUnitToIndexMap;
 
   StringIntegerBijection(this.codeUnits)
-      : codeUnitToIntegerMap = {
+      : codeUnitToIndexMap = {
           for (var i = 0; i < codeUnits.length; ++i) codeUnits[i]: i
         } {
     assert(!codeUnits.any((codeUnit) => codeUnit < 0));
     assert(codeUnits.length > 1);
   }
 
-  BigInt? fromString(String string) {
-    var integer = BigInt.zero;
+  BigInt fromString(final String string) {
+    var base = BigInt.zero;
 
-    for (final codeUnit in string.codeUnits) {
-      final register = codeUnitToIntegerMap[codeUnit];
-
-      if (register == null) {
-        return null;
-      }
-
-      integer *= BigInt.from(codeUnits.length);
-      integer += BigInt.from(register);
+    for (var power = 0; power < string.length; ++power) {
+      base += BigInt.from(codeUnits.length).pow(power);
     }
 
-    return integer;
+    var rest = BigInt.zero;
+
+    for (var power = 0; power < string.length; ++power) {
+      final register = codeUnitToIndexMap[string.codeUnitAt(power)]!;
+
+      rest *= BigInt.from(codeUnits.length);
+      rest += BigInt.from(register);
+    }
+
+    return base + rest;
   }
 
-  String fromInteger(BigInt integer) {
+  String fromInteger(final BigInt integer) {
     assert(!integer.isNegative);
 
+    var length = 0;
+    var base = BigInt.zero;
+
+    while (base + BigInt.from(codeUnits.length).pow(length) <= integer) {
+      base += BigInt.from(codeUnits.length).pow(length);
+      ++length;
+    }
+
+    var rest = integer - base;
     var string = '';
 
-    while (integer > BigInt.zero) {
+    for (var i = 0; i < length; ++i) {
       final codeUnit =
-          codeUnits[(integer % BigInt.from(codeUnits.length)).toInt()];
+          codeUnits[(rest % BigInt.from(codeUnits.length)).toInt()];
 
       string = String.fromCharCode(codeUnit) + string;
-      integer ~/= BigInt.from(codeUnits.length);
+      rest ~/= BigInt.from(codeUnits.length);
     }
 
     return string;

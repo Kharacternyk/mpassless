@@ -16,10 +16,10 @@ void main() {
       final integer = points[string]!;
 
       test('$string -> $integer', () {
-        expect(bijection.fromString(string), integer);
+        expect(bijection.mapToInteger(string), integer);
       });
       test('$integer -> $string', () {
-        expect(bijection.fromInteger(integer), string);
+        expect(bijection.mapToString(integer), string);
       });
     }
   });
@@ -32,9 +32,9 @@ void main() {
 
     final integer = signedInteger.abs();
     final bijection = StringIntegerBijection(codeUnits.toList());
-    final string = bijection.fromInteger(integer);
+    final string = bijection.mapToString(integer);
 
-    expect(bijection.fromString(string), integer);
+    expect(bijection.mapToInteger(string), integer);
   });
 
   Glados(any.lowercaseLetters)
@@ -42,8 +42,8 @@ void main() {
           (string) {
     final bijection =
         StringIntegerBijection([for (var i = 97; i <= 122; ++i) i]);
-    final integer = bijection.fromString(string);
+    final integer = bijection.mapToInteger(string);
 
-    expect(bijection.fromInteger(integer), string);
+    expect(bijection.mapToString(integer), string);
   });
 }

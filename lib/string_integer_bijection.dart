@@ -10,7 +10,7 @@ class StringIntegerBijection {
     assert(codeUnits.length > 1);
   }
 
-  BigInt fromString(final String string) {
+  BigInt mapToInteger(final String string) {
     var base = BigInt.zero;
 
     for (var power = 0; power < string.length; ++power) {
@@ -29,7 +29,7 @@ class StringIntegerBijection {
     return base + rest;
   }
 
-  String fromInteger(final BigInt integer) {
+  String mapToString(final BigInt integer) {
     assert(!integer.isNegative);
 
     var length = 0;

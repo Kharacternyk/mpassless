@@ -1,26 +1,31 @@
 import 'polynomial.dart';
 import 'string_integer_bijection.dart';
+import 'ascii_set.dart';
 
 class PasswordManager {
-  final StringIntegerBijection slugBijection;
-  final StringIntegerBijection passwordBijection;
+  final StringIntegerBijection _slugBijection;
+  final StringIntegerBijection _passwordBijection;
   final BigInt modulus;
 
-  PasswordManager(this.slugBijection, this.passwordBijection, this.modulus);
+  PasswordManager(
+      AsciiSet slugCharacters, AsciiSet passwordCharacters, this.modulus)
+      : _slugBijection = StringIntegerBijection(slugCharacters.codeUnits),
+        _passwordBijection =
+            StringIntegerBijection(passwordCharacters.codeUnits);
 
-  Map<String, String> mapSlugsToPasswods(
+  Map<String, String> mapSlugsToPasswords(
       Iterable<String> slugs, Map<String, String> slugPasswordMap) {
     final points = {
       for (final slug in slugPasswordMap.keys)
-        slugBijection.mapToInteger(slug):
-            passwordBijection.mapToInteger(slugPasswordMap[slug]!)
+        _slugBijection.mapToInteger(slug):
+            _passwordBijection.mapToInteger(slugPasswordMap[slug]!)
     };
     final polynomial = Polynomial(modulus, points);
 
     return {
       for (final slug in slugs)
-        slug: passwordBijection
-            .mapToString(polynomial[slugBijection.mapToInteger(slug)])
+        slug: _passwordBijection
+            .mapToString(polynomial[_slugBijection.mapToInteger(slug)])
     };
   }
 }

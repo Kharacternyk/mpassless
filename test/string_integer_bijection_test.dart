@@ -1,4 +1,4 @@
-import 'package:mpassless/ascii_string.dart';
+import 'package:mpassless/ascii_set.dart';
 import 'package:mpassless/string_integer_bijection.dart';
 import 'package:glados/glados.dart';
 
@@ -42,7 +42,7 @@ void main() {
       .test('string to integer conversion is reversible over lowercase letters',
           (string) {
     final bijection =
-        StringIntegerBijection(AsciiString.lowerCaseLetters.codeUnits);
+        StringIntegerBijection(AsciiSet.lowerCaseLetters.codeUnits);
     final integer = bijection.mapToInteger(string);
 
     expect(bijection.mapToString(integer), string);

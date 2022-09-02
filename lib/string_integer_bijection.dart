@@ -1,10 +1,12 @@
 class StringIntegerBijection {
-  final List<int> codeUnits;
-  final Map<int, int> codeUnitToIndexMap;
+  final List<int> _codeUnits;
+  final Map<int, int> _codeUnitToIndexMap;
 
-  StringIntegerBijection(this.codeUnits)
-      : codeUnitToIndexMap = {
-          for (var i = 0; i < codeUnits.length; ++i) codeUnits[i]: i
+  StringIntegerBijection(Iterable<int> codeUnits)
+      : _codeUnits = codeUnits.toList(),
+        _codeUnitToIndexMap = {
+          for (final entry in codeUnits.toList().asMap().entries)
+            entry.value: entry.key
         } {
     assert(!codeUnits.any((codeUnit) => codeUnit < 0));
     assert(codeUnits.length > 1);
@@ -14,15 +16,15 @@ class StringIntegerBijection {
     var base = BigInt.zero;
 
     for (var power = 0; power < string.length; ++power) {
-      base += BigInt.from(codeUnits.length).pow(power);
+      base += BigInt.from(_codeUnits.length).pow(power);
     }
 
     var rest = BigInt.zero;
 
     for (var power = 0; power < string.length; ++power) {
-      final register = codeUnitToIndexMap[string.codeUnitAt(power)]!;
+      final register = _codeUnitToIndexMap[string.codeUnitAt(power)]!;
 
-      rest *= BigInt.from(codeUnits.length);
+      rest *= BigInt.from(_codeUnits.length);
       rest += BigInt.from(register);
     }
 
@@ -35,8 +37,8 @@ class StringIntegerBijection {
     var length = 0;
     var base = BigInt.zero;
 
-    while (base + BigInt.from(codeUnits.length).pow(length) <= integer) {
-      base += BigInt.from(codeUnits.length).pow(length);
+    while (base + BigInt.from(_codeUnits.length).pow(length) <= integer) {
+      base += BigInt.from(_codeUnits.length).pow(length);
       ++length;
     }
 
@@ -45,10 +47,10 @@ class StringIntegerBijection {
 
     for (var i = 0; i < length; ++i) {
       final codeUnit =
-          codeUnits[(rest % BigInt.from(codeUnits.length)).toInt()];
+          _codeUnits[(rest % BigInt.from(_codeUnits.length)).toInt()];
 
       string = String.fromCharCode(codeUnit) + string;
-      rest ~/= BigInt.from(codeUnits.length);
+      rest ~/= BigInt.from(_codeUnits.length);
     }
 
     return string;

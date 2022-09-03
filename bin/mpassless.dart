@@ -16,7 +16,8 @@ void interact([String message = '\n']) {
 void checkSlug(String slug) {
   if (!slugCharacters.enoughFor(slug)) {
     stderr.writeln('$slug is not a valid slug—'
-        'slugs must contain only lower case ASCII letters, numbers, dashes and periods.');
+        'slugs must contain only lower case ASCII letters, '
+        'numbers, dashes and periods.');
     exit(1);
   }
 }
@@ -55,7 +56,8 @@ void main(List<String> arguments) {
     }
     if (!passwordCharacters.enoughFor(password)) {
       stderr.writeln('$password is not a valid password—'
-          'passwords must contain only unit-width ASCII characters (ASCII 32-126 inclusive)');
+          'passwords must contain only unit-width ASCII characters '
+          '(ASCII 32-126 inclusive)');
       exit(1);
     }
 

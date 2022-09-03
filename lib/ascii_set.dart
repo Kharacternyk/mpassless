@@ -27,4 +27,8 @@ class AsciiSet {
   AsciiSet operator +(AsciiSet other) {
     return AsciiSet(SplayTreeSet.from(codeUnits.union(other.codeUnits)));
   }
+
+  bool enoughFor(String string) {
+    return string.codeUnits.every((codeUnit) => codeUnits.contains(codeUnit));
+  }
 }

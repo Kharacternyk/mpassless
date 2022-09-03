@@ -13,6 +13,14 @@ void interact([String message = '\n']) {
   }
 }
 
+void checkSlug(String slug) {
+  if (!slugCharacters.enoughFor(slug)) {
+    stderr.writeln('$slug is not a valid slug—'
+        'slugs must contain only lower case ASCII letters, numbers, dashes and periods.');
+    exit(1);
+  }
+}
+
 void main(List<String> arguments) {
   final passwordManager =
       PasswordManager(slugCharacters, passwordCharacters, modulus);
@@ -33,6 +41,7 @@ void main(List<String> arguments) {
       break;
     }
 
+    checkSlug(slug);
     interact('password [$slug]: ');
 
     if (stdin.hasTerminal) {
@@ -43,6 +52,11 @@ void main(List<String> arguments) {
 
     if (password == null) {
       return;
+    }
+    if (!passwordCharacters.enoughFor(password)) {
+      stderr.writeln('$password is not a valid password—'
+          'passwords must contain only unit-width ASCII characters (ASCII 32-126 inclusive)');
+      exit(1);
     }
 
     if (stdin.hasTerminal) {
@@ -69,12 +83,8 @@ void main(List<String> arguments) {
       break;
     }
 
-    try {
-      stdout.writeln(
-          passwordManager.mapSlugsToPasswords([slug], slugPasswordMap)[slug]!);
-    } catch (error) {
-      stderr.writeln(error);
-      break;
-    }
+    checkSlug(slug);
+    stdout.writeln(
+        passwordManager.mapSlugsToPasswords([slug], slugPasswordMap)[slug]!);
   }
 }

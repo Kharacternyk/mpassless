@@ -8,7 +8,7 @@ class StringIntegerBijection {
           for (final entry in codeUnits.toList().asMap().entries)
             entry.value: entry.key
         } {
-    assert(!codeUnits.any((codeUnit) => codeUnit < 0));
+    assert(codeUnits.every((codeUnit) => codeUnit >= 0));
     assert(codeUnits.length > 1);
   }
 
@@ -32,7 +32,7 @@ class StringIntegerBijection {
   }
 
   String mapToString(final BigInt integer) {
-    assert(!integer.isNegative);
+    assert(integer >= BigInt.zero);
 
     var length = 0;
     var base = BigInt.zero;

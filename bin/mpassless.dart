@@ -7,49 +7,74 @@ final slugCharacters =
     AsciiSet.numbers + AsciiSet.lowerCaseLetters + AsciiSet.fromString('.-');
 final passwordCharacters = AsciiSet.unitWidthCharacters;
 
+void interact([String message = '\n']) {
+  if (stdin.hasTerminal && stderr.hasTerminal) {
+    stderr.write(message);
+  }
+}
+
 void main(List<String> arguments) {
   final passwordManager =
       PasswordManager(slugCharacters, passwordCharacters, modulus);
   final slugPasswordMap = <String, String>{};
 
-  stdout.writeln('Enter known slugs and passwords.');
-  stdout.writeln('Press <Ctrl+D> when done.');
+  interact('Enter known slugs and passwords.\n');
+  interact('Enter empty slug wnen done.\n');
 
-  for (;;) {
-    stdout.write('Password slug: ');
+  for (var i = 1; /**/; ++i) {
+    interact('slug [$i]: ');
 
     final slug = stdin.readLineSync();
 
     if (slug == null) {
+      return;
+    }
+    if (slug.isEmpty) {
       break;
     }
 
-    stdout.write('Password for $slug: ');
-    stdin.echoMode = false;
+    interact('password [$slug]: ');
 
-    final password = stdin.readLineSync() ?? '';
+    if (stdin.hasTerminal) {
+      stdin.echoMode = false;
+    }
 
-    stdin.echoMode = true;
-    stdout.writeln();
+    final password = stdin.readLineSync();
+
+    if (password == null) {
+      return;
+    }
+
+    if (stdin.hasTerminal) {
+      stdin.echoMode = true;
+    }
+
+    interact();
     slugPasswordMap[slug] = password;
   }
 
-  stdout.writeln();
-  stdout.writeln('Enter slugs of unknown passwords that you wish to get');
-  stdout.writeln('Press <Ctrl+D> when done.');
+  interact();
+  interact('Enter slugs of unknown passwords that you wish to get.\n');
+  interact('Enter empty slug when done.\n');
 
-  for (;;) {
-    stdout.write('Password slug: ');
+  for (var i = 1; /**/; ++i) {
+    interact('slug [$i]: ');
 
     final slug = stdin.readLineSync();
 
     if (slug == null) {
+      return;
+    }
+    if (slug.isEmpty) {
       break;
     }
 
-    stdout.writeln(
-        passwordManager.mapSlugsToPasswords([slug], slugPasswordMap)[slug]!);
+    try {
+      stdout.writeln(
+          passwordManager.mapSlugsToPasswords([slug], slugPasswordMap)[slug]!);
+    } catch (error) {
+      stderr.writeln(error);
+      break;
+    }
   }
-
-  stdout.writeln();
 }

@@ -27,7 +27,7 @@ void main(List<String> arguments) {
   final slugPasswordMap = <String, String>{};
 
   interact('Enter known slugs and passwords.\n');
-  interact('Enter empty slug wnen done.\n');
+  interact('Enter empty slug when done.\n');
 
   for (var i = 1; /**/; ++i) {
     interact('slug [$i]: ');

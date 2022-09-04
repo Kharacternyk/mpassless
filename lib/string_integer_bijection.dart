@@ -1,13 +1,12 @@
 class StringIntegerBijection {
   final List<int> _codeUnits;
-  final Map<int, int> _codeUnitToIndexMap;
+  late final Map<int, int> _codeUnitToIndexMap;
 
   StringIntegerBijection(Iterable<int> codeUnits)
-      : _codeUnits = codeUnits.toList(),
-        _codeUnitToIndexMap = {
-          for (final entry in codeUnits.toList().asMap().entries)
-            entry.value: entry.key
-        } {
+      : _codeUnits = codeUnits.toList() {
+    _codeUnitToIndexMap = {
+      for (var i = 0; i < _codeUnits.length; ++i) _codeUnits[i]: i
+    };
     assert(codeUnits.every((codeUnit) => codeUnit >= 0));
     assert(codeUnits.length > 1);
   }

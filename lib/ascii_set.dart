@@ -1,7 +1,8 @@
 import 'dart:collection' show SplayTreeSet;
 
 class AsciiSet {
-  final SplayTreeSet<int> codeUnits;
+  final SplayTreeSet<int> _codeUnits;
+  Iterable<int> get codeUnits => _codeUnits;
 
   static final AsciiSet numbers = AsciiSet.fromCharacterRange('0', '9');
   static final AsciiSet lowerCaseLetters =
@@ -11,13 +12,13 @@ class AsciiSet {
   static final AsciiSet unitWidthCharacters =
       AsciiSet.fromCharacterRange(' ', '~');
 
-  AsciiSet(this.codeUnits) {
-    assert(codeUnits.every((codeUnit) => codeUnit >= 0 && codeUnit <= 127));
+  AsciiSet._unsafe(this._codeUnits) {
+    assert(_codeUnits.every((codeUnit) => codeUnit >= 0 && codeUnit <= 127));
   }
   AsciiSet.fromString(String string)
-      : this(SplayTreeSet.from(string.codeUnits));
+      : this._unsafe(SplayTreeSet.from(string.codeUnits));
   AsciiSet.fromCharacterRange(String firstCharacter, String lastCharacter)
-      : this(SplayTreeSet.from([
+      : this._unsafe(SplayTreeSet.from([
           for (var i = firstCharacter.codeUnitAt(0);
               i <= lastCharacter.codeUnitAt(0);
               ++i)
@@ -25,10 +26,14 @@ class AsciiSet {
         ]));
 
   AsciiSet operator +(AsciiSet other) {
-    return AsciiSet(SplayTreeSet.from(codeUnits.union(other.codeUnits)));
+    return AsciiSet._unsafe(
+        SplayTreeSet.from(_codeUnits.union(other._codeUnits)));
   }
 
   bool enoughFor(String string) {
-    return string.codeUnits.every((codeUnit) => codeUnits.contains(codeUnit));
+    return string.codeUnits.every((codeUnit) => _codeUnits.contains(codeUnit));
   }
+
+  @override
+  String toString() => String.fromCharCodes(_codeUnits);
 }

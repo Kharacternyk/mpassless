@@ -1,11 +1,5 @@
 import 'dart:io';
 import 'package:mpassless/password_manager.dart';
-import 'package:mpassless/ascii_set.dart';
-
-final modulus = BigInt.two.pow(521) - BigInt.one;
-final slugCharacters =
-    AsciiSet.numbers + AsciiSet.lowerCaseLetters + AsciiSet.fromString('.-');
-final passwordCharacters = AsciiSet.unitWidthCharacters;
 
 void interact([String message = '\n']) {
   if (stdin.hasTerminal && stderr.hasTerminal) {
@@ -13,19 +7,8 @@ void interact([String message = '\n']) {
   }
 }
 
-void checkSlug(String slug) {
-  if (!slugCharacters.enoughFor(slug)) {
-    stderr.writeln('$slug is not a valid slug—'
-        'slugs must contain only lower case ASCII letters, '
-        'numbers, dashes and periods.');
-    exit(1);
-  }
-}
-
 void main(List<String> arguments) {
-  final passwordManager =
-      PasswordManager(slugCharacters, passwordCharacters, modulus);
-  final slugPasswordMap = <String, String>{};
+  final passwordManager = PasswordManager();
 
   interact('Enter known slugs and passwords.\n');
   interact('Enter empty slug when done.\n');
@@ -42,7 +25,6 @@ void main(List<String> arguments) {
       break;
     }
 
-    checkSlug(slug);
     interact('password [$slug]: ');
 
     if (stdin.hasTerminal) {
@@ -54,19 +36,12 @@ void main(List<String> arguments) {
     if (password == null) {
       return;
     }
-    if (!passwordCharacters.enoughFor(password)) {
-      stderr.writeln('$password is not a valid password—'
-          'passwords must contain only unit-width ASCII characters '
-          '(ASCII 32-126 inclusive)');
-      exit(1);
-    }
-
     if (stdin.hasTerminal) {
       stdin.echoMode = true;
     }
 
     interact();
-    slugPasswordMap[slug] = password;
+    passwordManager.addPassword(slug, password);
   }
 
   interact();
@@ -85,8 +60,6 @@ void main(List<String> arguments) {
       break;
     }
 
-    checkSlug(slug);
-    stdout.writeln(
-        passwordManager.mapSlugsToPasswords([slug], slugPasswordMap)[slug]!);
+    stdout.writeln(passwordManager.getPassword(slug));
   }
 }

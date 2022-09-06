@@ -32,7 +32,7 @@ class PasswordManager {
   late final StringIntegerBijection _passwordBijection;
 
   PasswordManager(
-      [AsciiSet? slugCharacters, AsciiSet? passwordCharacters, BigInt? modulus])
+      {AsciiSet? slugCharacters, AsciiSet? passwordCharacters, BigInt? modulus})
       : _polynomial =
             Polynomial(modulus ?? BigInt.two.pow(521) - BigInt.one, {}),
         _slugCharacters = slugCharacters ??

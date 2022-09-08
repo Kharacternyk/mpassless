@@ -2,7 +2,7 @@ import 'list_integer_bijection.dart';
 import 'package:pointycastle/key_derivators/api.dart';
 import 'package:pointycastle/key_derivators/argon2.dart';
 
-class KeyDerivator {
+class SlowIntegerMapping {
   BigInt deriveKey(BigInt integer, BigInt salt, BigInt modulus) {
     final bijection = ListIntegerBijection((modulus.bitLength / 8).ceil());
     final parameters = Argon2Parameters(

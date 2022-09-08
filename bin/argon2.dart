@@ -1,9 +1,9 @@
-import 'package:mpassless/key_derivator.dart';
+import 'package:mpassless/slow_integer_mapping.dart';
 import 'package:mpassless/string_integer_bijection.dart';
 import 'package:mpassless/ascii_set.dart';
 
 void main(List<String> arguments) {
-  final derivator = KeyDerivator();
+  final derivator = SlowIntegerMapping();
   final bijection =
       StringIntegerBijection(AsciiSet.unitWidthCharacters.codeUnits);
   final salt = bijection.mapToInteger(arguments[0]);

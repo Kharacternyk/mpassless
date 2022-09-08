@@ -1,37 +1,37 @@
 import 'dart:typed_data';
 
-class ListIntegerBijection {
+class BytesIntegerBijection {
   static final _big256 = BigInt.two.pow(8);
-  final int listLength;
+  final int byteCount;
 
-  ListIntegerBijection(this.listLength) {
-    assert(listLength > 0);
+  BytesIntegerBijection(this.byteCount) {
+    assert(byteCount > 0);
   }
 
-  Uint8List mapToList(BigInt integer) {
+  Uint8List mapToBytes(BigInt integer) {
     final integerByteSize = (integer.bitLength / 8).ceil();
     final unpaddedReversedList = <int>[];
 
-    assert(integer >= BigInt.zero && integerByteSize <= listLength);
+    assert(integer >= BigInt.zero && integerByteSize <= byteCount);
 
     while (integer > BigInt.zero) {
       unpaddedReversedList.add((integer % _big256).toInt());
       integer ~/= _big256;
     }
 
-    final result = Uint8List(listLength);
+    final result = Uint8List(byteCount);
 
     for (var i = 0; i < unpaddedReversedList.length; ++i) {
-      result[listLength - i - 1] = unpaddedReversedList[i];
+      result[byteCount - i - 1] = unpaddedReversedList[i];
     }
 
     return result;
   }
 
-  BigInt mapToInteger(Uint8List list) {
+  BigInt mapToInteger(Uint8List bytes) {
     var result = BigInt.zero;
 
-    for (final register in list) {
+    for (final register in bytes) {
       result *= _big256;
       result += BigInt.from(register);
     }

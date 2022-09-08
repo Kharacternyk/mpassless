@@ -1,10 +1,10 @@
 import 'dart:typed_data';
-import 'package:mpassless/list_integer_bijection.dart';
+import 'package:mpassless/bytes_integer_bijection.dart';
 import 'package:glados/glados.dart';
 
 void main() {
   group('test bijection with specific points and size of two', () {
-    final bijection = ListIntegerBijection(2);
+    final bijection = BytesIntegerBijection(2);
     final points = {
       [0, 0]: BigInt.from(0),
       [0, 2]: BigInt.from(2),
@@ -19,25 +19,25 @@ void main() {
         expect(bijection.mapToInteger(Uint8List.fromList(list)), integer);
       });
       test('$integer -> $list', () {
-        expect(bijection.mapToList(integer), Uint8List.fromList(list));
+        expect(bijection.mapToBytes(integer), Uint8List.fromList(list));
       });
     }
   });
 
-  Glados(any.bigInt).test('integer to list conversion is reversible',
+  Glados(any.bigInt).test('integer to bytes conversion is reversible',
       (signedInteger) {
     final integer = signedInteger.abs();
-    final bijection = ListIntegerBijection(integer.bitLength ~/ 8 + 1);
-    final list = bijection.mapToList(integer);
+    final bijection = BytesIntegerBijection(integer.bitLength ~/ 8 + 1);
+    final bytes = bijection.mapToBytes(integer);
 
-    expect(bijection.mapToInteger(list), integer);
+    expect(bijection.mapToInteger(bytes), integer);
   });
 
   Glados(any.nonEmptyList(any.intInRange(0, 256)))
-      .test('list to integer conversion is reversible', (list) {
-    final bijection = ListIntegerBijection(list.length);
-    final integer = bijection.mapToInteger(Uint8List.fromList(list));
+      .test('bytes to integer conversion is reversible', (bytes) {
+    final bijection = BytesIntegerBijection(bytes.length);
+    final integer = bijection.mapToInteger(Uint8List.fromList(bytes));
 
-    expect(bijection.mapToList(integer), list);
+    expect(bijection.mapToBytes(integer), bytes);
   });
 }

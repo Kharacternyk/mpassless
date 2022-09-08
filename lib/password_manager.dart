@@ -1,28 +1,8 @@
 import 'polynomial.dart';
 import 'string_integer_bijection.dart';
 import 'ascii_set.dart';
-
-class InvalidPasswordException implements Exception {
-  final AsciiSet asciiSet;
-  final String password;
-
-  InvalidPasswordException(this.asciiSet, this.password);
-
-  @override
-  String toString() => 'Invalid password: some characters in $password '
-      'are outside the allowed set of $asciiSet';
-}
-
-class InvalidSlugException implements Exception {
-  final AsciiSet asciiSet;
-  final String slug;
-
-  InvalidSlugException(this.asciiSet, this.slug);
-
-  @override
-  String toString() => 'Invalid slug: some characters in $slug '
-      'are outside the allowed set of $asciiSet';
-}
+import 'invalid_password_exception.dart';
+import 'invalid_slug_exception.dart';
 
 class PasswordManager {
   final AsciiSet _slugCharacters;

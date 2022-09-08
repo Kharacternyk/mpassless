@@ -6,7 +6,7 @@ class SlowIntegerMapping {
   BigInt deriveKey(BigInt integer, BigInt salt, BigInt modulus) {
     final bijection = ListIntegerBijection((modulus.bitLength / 8).ceil());
     final parameters = Argon2Parameters(
-      Argon2Parameters.ARGON2_d,
+      Argon2Parameters.ARGON2_id,
       bijection.mapToList(salt),
       desiredKeyLength: modulus.bitLength,
       iterations: 100,

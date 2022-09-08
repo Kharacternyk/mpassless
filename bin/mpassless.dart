@@ -8,7 +8,7 @@ void interact([String message = '\n']) {
 }
 
 void main(List<String> arguments) {
-  final passwordManager = PasswordManager();
+  final passwordManager = PasswordManager.v1();
 
   interact('Enter known slugs and passwords.\n');
   interact('Enter empty slug when done.\n');

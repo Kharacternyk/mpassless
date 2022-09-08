@@ -11,7 +11,7 @@ class PasswordManager {
   late final StringIntegerBijection _slugBijection;
   late final StringIntegerBijection _passwordBijection;
 
-  PasswordManager(
+  PasswordManager.v1(
       {AsciiSet? slugCharacters, AsciiSet? passwordCharacters, BigInt? modulus})
       : _polynomial =
             Polynomial(modulus ?? BigInt.two.pow(521) - BigInt.one, {}),

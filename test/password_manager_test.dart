@@ -4,7 +4,7 @@ import 'package:glados/glados.dart';
 void main() {
   test('passwords can be restored from the other ones and generated secrets',
       () {
-    var passwordManager = PasswordManager();
+    var passwordManager = PasswordManager.v1();
     final rememberedPasswords = {
       'github.com': 'OctoCat42(~.~)',
       'archlinux.org': 'correct horse battery staple',
@@ -23,7 +23,7 @@ void main() {
             passwordManager.getPassword(generatedPasswordName)
     };
 
-    passwordManager = PasswordManager();
+    passwordManager = PasswordManager.v1();
     passwordManager.addPasswords(rememberedPasswords);
     passwordManager.addPasswords(generatedPasswords);
 

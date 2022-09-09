@@ -11,7 +11,7 @@ class SlowIntegerMapping {
     assert(iterationCount > 0);
   }
 
-  BigInt deriveKey(BigInt integer, BigInt salt, BigInt modulus) {
+  BigInt map(BigInt integer, BigInt salt, BigInt modulus) {
     final bijection = BytesIntegerBijection((modulus.bitLength / 8).ceil());
     final parameters = Argon2Parameters(
       Argon2Parameters.ARGON2_id,

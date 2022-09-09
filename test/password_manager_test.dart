@@ -1,4 +1,4 @@
-import 'package:mpassless/password_manager.dart';
+import 'package:mpassless/src/password_manager.dart';
 import 'package:glados/glados.dart';
 
 void main() {

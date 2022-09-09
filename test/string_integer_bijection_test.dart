@@ -1,5 +1,5 @@
-import 'package:mpassless/ascii_set.dart';
-import 'package:mpassless/string_integer_bijection.dart';
+import 'package:mpassless/src/ascii_set.dart';
+import 'package:mpassless/src/string_integer_bijection.dart';
 import 'package:glados/glados.dart';
 
 void main() {

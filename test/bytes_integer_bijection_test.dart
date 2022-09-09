@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:mpassless/bytes_integer_bijection.dart';
+import 'package:mpassless/src/bytes_integer_bijection.dart';
 import 'package:glados/glados.dart';
 
 void main() {

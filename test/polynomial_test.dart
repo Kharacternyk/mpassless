@@ -1,4 +1,4 @@
-import 'package:mpassless/polynomial.dart';
+import 'package:mpassless/src/polynomial.dart';
 import 'package:glados/glados.dart';
 
 BigInt b(int x) => BigInt.from(x);

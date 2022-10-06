@@ -12,13 +12,13 @@ class AsciiSet {
   static final AsciiSet unitWidthCharacters =
       AsciiSet.fromCharacterRange(' ', '~');
 
-  AsciiSet._unsafe(this._codeUnits) {
+  AsciiSet._(this._codeUnits) {
     assert(_codeUnits.every((codeUnit) => codeUnit >= 0 && codeUnit <= 127));
   }
   AsciiSet.fromString(String string)
-      : this._unsafe(SplayTreeSet.from(string.codeUnits));
+      : this._(SplayTreeSet.from(string.codeUnits));
   AsciiSet.fromCharacterRange(String firstCharacter, String lastCharacter)
-      : this._unsafe(SplayTreeSet.from([
+      : this._(SplayTreeSet.from([
           for (var i = firstCharacter.codeUnitAt(0);
               i <= lastCharacter.codeUnitAt(0);
               ++i)
@@ -26,8 +26,7 @@ class AsciiSet {
         ]));
 
   AsciiSet operator +(AsciiSet other) {
-    return AsciiSet._unsafe(
-        SplayTreeSet.from(_codeUnits.union(other._codeUnits)));
+    return AsciiSet._(SplayTreeSet.from(_codeUnits.union(other._codeUnits)));
   }
 
   bool enoughFor(String string) {

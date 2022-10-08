@@ -42,17 +42,17 @@ class PasswordManager {
         _passwordBijection =
             StringIntegerBijection(_passwordCharacters.codeUnits);
 
-  factory PasswordManager.v1(
-      {AsciiSet? slugCharacters,
-      AsciiSet? passwordCharacters,
-      BigInt? modulus}) {
+  factory PasswordManager.v1({
+    AsciiSet? slugCharacters,
+    AsciiSet? passwordCharacters,
+  }) {
     return PasswordManager._(
       slugCharacters ??
           AsciiSet.lowerCaseLetters +
               AsciiSet.numbers +
               AsciiSet.fromString('.-'),
       passwordCharacters ?? AsciiSet.unitWidthCharacters,
-      modulus ?? BigInt.two.pow(521) - BigInt.one,
+      BigInt.two.pow(521) - BigInt.one,
     );
   }
 

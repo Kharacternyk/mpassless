@@ -32,5 +32,7 @@ class Secret {
   }
 
   @override
-  String toString() => "$salt$delimiter$x$delimiter$y";
+  String toString() => "${_bijection.mapToString(salt)}$delimiter"
+      "${_bijection.mapToString(x)}$delimiter"
+      "${_bijection.mapToString(y)}";
 }

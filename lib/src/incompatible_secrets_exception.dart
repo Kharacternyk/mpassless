@@ -1,0 +1,1 @@
+class IncompatibleSecretsException implements Exception {}

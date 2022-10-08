@@ -1,10 +1,12 @@
 import 'package:mpassless/src/password_manager.dart';
+import 'package:mpassless/src/slow_integer_mapping.dart';
 import 'package:glados/glados.dart';
 
 void main() {
   test('passwords can be restored from the other ones and generated secrets',
       () {
-    final manager = PasswordManager.v1();
+    final manager =
+        PasswordManager.v1(slowIntegerMapping: SlowIntegerMapping(2, 1));
     final rememberedPasswords = {
       manager.parseSlug('github.com'): manager.parsePassword('OctoCat42(~.~)'),
       manager.parseSlug('archlinux.org'):
@@ -17,7 +19,7 @@ void main() {
     };
     final secrets = manager.generateSecrets(
         {...rememberedPasswords, ...forgottenPasswords},
-        forgottenPasswords.length);
+        forgottenPasswords.length * 2);
 
     for (final forgottenPasswordSlug in forgottenPasswords.keys) {
       expect(

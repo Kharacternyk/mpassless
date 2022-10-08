@@ -1,21 +1,22 @@
 import 'dart:io';
 import 'package:mpassless/password_manager.dart';
 
-void interact([String message = '\n']) {
-  if (stdin.hasTerminal && stderr.hasTerminal) {
-    stderr.write(message);
+void main(List<String> arguments) {
+  final mode = arguments[0];
+  final argument = arguments[1];
+
+  if (mode == 'generate') {
+    generateSecrets(int.parse(argument));
+  } else {
+    restorePassword(argument);
   }
 }
 
-void main(List<String> arguments) {
-  final passwordManager = PasswordManager.v1();
+void generateSecrets(int number) {
+  final manager = PasswordManager.v1();
+  final passwords = <Slug, Password>{};
 
-  interact('Enter known slugs and passwords.\n');
-  interact('Enter empty slug when done.\n');
-
-  for (var i = 1; /**/; ++i) {
-    interact('slug [$i]: ');
-
+  for (;;) {
     final slug = stdin.readLineSync();
 
     if (slug == null) {
@@ -25,7 +26,41 @@ void main(List<String> arguments) {
       break;
     }
 
-    interact('password [$slug]: ');
+    if (stdin.hasTerminal) {
+      stdin.echoMode = false;
+    }
+
+    final password = stdin.readLineSync();
+
+    if (password == null) {
+      break;
+    }
+    if (stdin.hasTerminal) {
+      stdin.echoMode = true;
+    }
+
+    passwords[manager.parseSlug(slug)] = manager.parsePassword(password);
+  }
+
+  for (final secret in manager.generateSecrets(passwords, number)) {
+    stdout.writeln(secret);
+  }
+}
+
+void restorePassword(String slug) {
+  final manager = PasswordManager.v1();
+  final passwords = <Slug, Password>{};
+  final secrets = <Secret>{};
+
+  for (;;) {
+    final slug = stdin.readLineSync();
+
+    if (slug == null) {
+      return;
+    }
+    if (slug.isEmpty) {
+      break;
+    }
 
     if (stdin.hasTerminal) {
       stdin.echoMode = false;
@@ -40,26 +75,19 @@ void main(List<String> arguments) {
       stdin.echoMode = true;
     }
 
-    interact();
-    passwordManager.addPassword(slug, password);
+    passwords[manager.parseSlug(slug)] = manager.parsePassword(password);
   }
 
-  interact();
-  interact('Enter slugs of unknown passwords that you wish to get.\n');
-  interact('Enter empty slug when done.\n');
+  for (;;) {
+    final secret = stdin.readLineSync();
 
-  for (var i = 1; /**/; ++i) {
-    interact('slug [$i]: ');
-
-    final slug = stdin.readLineSync();
-
-    if (slug == null) {
-      return;
-    }
-    if (slug.isEmpty) {
+    if (secret == null || secret.isEmpty) {
       break;
     }
 
-    stdout.writeln(passwordManager.getPassword(slug));
+    secrets.add(Secret.fromString(secret));
   }
+
+  stdout.writeln(
+      manager.restorePassword(manager.parseSlug(slug), passwords, secrets));
 }

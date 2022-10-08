@@ -4,32 +4,26 @@ import 'package:glados/glados.dart';
 void main() {
   test('passwords can be restored from the other ones and generated secrets',
       () {
-    var passwordManager = PasswordManager.v1();
+    final manager = PasswordManager.v1();
     final rememberedPasswords = {
-      'github.com': 'OctoCat42(~.~)',
-      'archlinux.org': 'correct horse battery staple',
+      manager.parseSlug('github.com'): manager.parsePassword('OctoCat42(~.~)'),
+      manager.parseSlug('archlinux.org'):
+          manager.parsePassword('correct horse battery staple'),
     };
     final forgottenPasswords = {
-      'tutanota.com': 'yEuH5nstN2ufXudJDCtEYWmD',
-      'laptop': '',
+      manager.parseSlug('tutanota.com'):
+          manager.parsePassword('yEuH5nstN2ufXudJDCtEYWmD'),
+      manager.parseSlug('laptop'): manager.parsePassword(''),
     };
-
-    passwordManager.addPasswords(rememberedPasswords);
-    passwordManager.addPasswords(forgottenPasswords);
-
-    final generatedPasswords = {
-      for (final generatedPasswordName in ['g1', 'g2'])
-        generatedPasswordName:
-            passwordManager.getPassword(generatedPasswordName)
-    };
-
-    passwordManager = PasswordManager.v1();
-    passwordManager.addPasswords(rememberedPasswords);
-    passwordManager.addPasswords(generatedPasswords);
+    final secrets = manager.generateSecrets(
+        {...rememberedPasswords, ...forgottenPasswords},
+        forgottenPasswords.length);
 
     for (final forgottenPasswordSlug in forgottenPasswords.keys) {
-      expect(passwordManager.getPassword(forgottenPasswordSlug),
-          forgottenPasswords[forgottenPasswordSlug]);
+      expect(
+          manager.restorePassword(
+              forgottenPasswordSlug, rememberedPasswords, secrets),
+          forgottenPasswords[forgottenPasswordSlug]!.value);
     }
   });
 }

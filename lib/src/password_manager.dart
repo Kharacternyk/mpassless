@@ -86,16 +86,10 @@ class PasswordManager {
     passwords.values.forEach(_throwIfNotOwn);
 
     final salt = _slowIntegerMapping.generateSecureSalt();
-    final integerPasswords = {
-      for (final slug in passwords.keys)
-        _slugBijection.mapToInteger(slug.value):
-            _passwordBijection.mapToInteger(passwords[slug]!.value),
-    };
+    final integerPasswords = _getIntegerPoints(passwords);
     final polynomial = Polynomial(_modulus, {
+      ..._getSlowPoints(integerPasswords, salt),
       ...integerPasswords,
-      for (final slug in integerPasswords.keys)
-        _modulus - slug:
-            _slowIntegerMapping.map(integerPasswords[slug]!, salt, _modulus)
     });
 
     var x = BigInt.zero;
@@ -125,22 +119,27 @@ class PasswordManager {
       throw IncompatibleSecretsException();
     }
 
-    final integerKnownPasswords = {
-      for (final knownSlug in knownPasswords.keys)
-        _slugBijection.mapToInteger(knownSlug.value):
-            _passwordBijection.mapToInteger(knownPasswords[knownSlug]!.value)
-    };
+    final integerKnownPasswords = _getIntegerPoints(knownPasswords);
     final polynomial = Polynomial(_modulus, {
       ...integerKnownPasswords,
-      for (final slug in integerKnownPasswords.keys)
-        _modulus - slug: _slowIntegerMapping.map(
-            integerKnownPasswords[slug]!, salts.first, _modulus),
+      ..._getSlowPoints(integerKnownPasswords, salts.first),
       for (final secret in secrets) secret.x: secret.y
     });
 
     return _passwordBijection
         .mapToString(polynomial[_slugBijection.mapToInteger(slug.value)]);
   }
+
+  Map<BigInt, BigInt> _getIntegerPoints(Map<Slug, Password> passwords) => {
+        for (final slug in passwords.keys)
+          _slugBijection.mapToInteger(slug.value):
+              _passwordBijection.mapToInteger(passwords[slug]!.value)
+      };
+
+  Map<BigInt, BigInt> _getSlowPoints(Map<BigInt, BigInt> points, salt) => {
+        for (final x in points.keys)
+          _modulus - x: _slowIntegerMapping.map(points[x]!, salt, _modulus)
+      };
 
   void _throwIfNotOwn(PasswordManagerTiedValue value) {
     if (value._manager != this) {

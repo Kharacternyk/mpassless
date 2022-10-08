@@ -92,7 +92,7 @@ class PasswordManager {
       ...integerPasswords,
     });
 
-    var x = BigInt.zero;
+    var x = BigInt.one;
     var secrets = <Secret>{};
 
     for (var i = 0; i < number; ++i) {

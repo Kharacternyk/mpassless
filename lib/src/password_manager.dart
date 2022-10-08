@@ -56,7 +56,7 @@ class PasswordManager {
               AsciiSet.numbers +
               AsciiSet.fromString('.-'),
       passwordCharacters ?? AsciiSet.unitWidthCharacters,
-      slowIntegerMapping ?? SlowIntegerMapping(200000, 3),
+      slowIntegerMapping ?? SlowIntegerMapping(200000, 2),
       BigInt.two.pow(521) - BigInt.one,
     );
   }

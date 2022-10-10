@@ -1,6 +1,6 @@
 class StringIntegerBijection {
   final List<int> _codeUnits;
-  late final Map<int, int> _codeUnitToIndexMap;
+  final Map<int, int> _codeUnitToIndexMap;
 
   StringIntegerBijection._(this._codeUnits, this._codeUnitToIndexMap);
 

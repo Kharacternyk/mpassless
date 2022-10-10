@@ -2,13 +2,19 @@ class StringIntegerBijection {
   final List<int> _codeUnits;
   late final Map<int, int> _codeUnitToIndexMap;
 
-  StringIntegerBijection(Iterable<int> codeUnits)
-      : _codeUnits = codeUnits.toList() {
-    _codeUnitToIndexMap = {
-      for (var i = 0; i < _codeUnits.length; ++i) _codeUnits[i]: i
+  StringIntegerBijection._(this._codeUnits, this._codeUnitToIndexMap);
+
+  factory StringIntegerBijection(Iterable<int> codeUnits) {
+    final codeUnitsAsList = codeUnits.toList();
+
+    assert(codeUnitsAsList.every((codeUnit) => codeUnit >= 0));
+    assert(codeUnitsAsList.length > 1);
+
+    final codeUnitToIndexMap = {
+      for (var i = 0; i < codeUnitsAsList.length; ++i) codeUnitsAsList[i]: i
     };
-    assert(codeUnits.every((codeUnit) => codeUnit >= 0));
-    assert(codeUnits.length > 1);
+
+    return StringIntegerBijection._(codeUnitsAsList, codeUnitToIndexMap);
   }
 
   BigInt mapToInteger(final String string) {

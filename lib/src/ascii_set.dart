@@ -33,6 +33,8 @@ class AsciiSet {
     return string.codeUnits.every((codeUnit) => _codeUnits.contains(codeUnit));
   }
 
+  bool get isEmpty => _codeUnits.isEmpty;
+
   @override
   String toString() => String.fromCharCodes(_codeUnits);
 }

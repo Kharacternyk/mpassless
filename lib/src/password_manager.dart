@@ -54,6 +54,15 @@ class PasswordManager {
     if (_tokenConvenienceDelimiterPeriod <= 0) {
       throw ArgumentError.value(_tokenConvenienceDelimiterPeriod);
     }
+    if (passwordCharacters.isEmpty) {
+      throw ArgumentError.value(passwordCharacters);
+    }
+    if (slugCharacters.isEmpty) {
+      throw ArgumentError.value(slugCharacters);
+    }
+    if (tokenCharacters.isEmpty) {
+      throw ArgumentError.value(tokenCharacters);
+    }
   }
 
   factory PasswordManager.v1(

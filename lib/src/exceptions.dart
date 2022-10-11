@@ -2,6 +2,6 @@ class TooLongException implements Exception {}
 
 class InvalidCharactersException implements Exception {}
 
-class IncompatibleSecretsException implements Exception {}
+class IncompatibleTokensException implements Exception {}
 
-class MalformedSecretException implements Exception {}
+class MalformedTokenException implements Exception {}

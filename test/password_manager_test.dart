@@ -15,15 +15,15 @@ void main() {
       'tutanota.com': 'yEuH5nstN2ufXudJDCtEYWmD',
       'laptop': '',
     };
-    final secrets = manager.generateSecrets({
+    final tokens = manager.generateTokens({
       ...manager.parsePasswords(rememberedPasswords),
       ...manager.parsePasswords(forgottenPasswords)
-    }, forgottenPasswords.length * 2);
+    }, forgottenPasswords.length * 2).map(manager.parseToken);
 
     for (final forgottenPasswordSlug in forgottenPasswords.keys) {
       expect(
           manager.restorePassword(manager.parseSlug(forgottenPasswordSlug),
-              manager.parsePasswords(rememberedPasswords), secrets),
+              manager.parsePasswords(rememberedPasswords), tokens),
           forgottenPasswords[forgottenPasswordSlug]);
     }
   });

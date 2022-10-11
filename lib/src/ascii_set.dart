@@ -13,7 +13,9 @@ class AsciiSet {
       AsciiSet.fromCharacterRange(' ', '~');
 
   AsciiSet._(this._codeUnits) {
-    assert(_codeUnits.every((codeUnit) => codeUnit >= 0 && codeUnit <= 127));
+    if (!(_codeUnits.every((codeUnit) => codeUnit >= 0 && codeUnit <= 127))) {
+      throw ArgumentError.value(_codeUnits);
+    }
   }
   AsciiSet.fromString(String string)
       : this._(SplayTreeSet.from(string.codeUnits));

@@ -32,11 +32,11 @@ void generateTokens(int number) {
 
     final password = stdin.readLineSync();
 
-    if (password == null) {
-      break;
-    }
     if (stdin.hasTerminal) {
       stdin.echoMode = true;
+    }
+    if (password == null) {
+      break;
     }
 
     passwords[manager.parseSlug(slug)] = manager.parsePassword(password);

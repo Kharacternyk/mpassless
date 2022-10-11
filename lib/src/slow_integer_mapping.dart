@@ -4,15 +4,15 @@ import 'package:pointycastle/key_derivators/api.dart';
 import 'package:pointycastle/key_derivators/argon2.dart';
 
 class SlowIntegerMapping {
-  final int _usedKiBCount;
-  final int _iterationCount;
+  final int usedKiBCount;
+  final int iterationCount;
 
-  SlowIntegerMapping(this._usedKiBCount, this._iterationCount) {
-    if (_usedKiBCount <= 1) {
-      throw ArgumentError.value(_usedKiBCount);
+  SlowIntegerMapping(this.usedKiBCount, this.iterationCount) {
+    if (usedKiBCount <= 1) {
+      throw ArgumentError.value(usedKiBCount);
     }
-    if (_iterationCount <= 0) {
-      throw ArgumentError.value(_iterationCount);
+    if (iterationCount <= 0) {
+      throw ArgumentError.value(iterationCount);
     }
   }
 
@@ -22,8 +22,8 @@ class SlowIntegerMapping {
       Argon2Parameters.ARGON2_id,
       bijection.mapToBytes(salt),
       desiredKeyLength: modulus.bitLength,
-      iterations: _iterationCount,
-      memory: _usedKiBCount,
+      iterations: iterationCount,
+      memory: usedKiBCount,
     );
     final generator = Argon2BytesGenerator()..init(parameters);
     final key = generator.process(bijection.mapToBytes(integer));

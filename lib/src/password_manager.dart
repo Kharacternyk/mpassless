@@ -130,6 +130,9 @@ class PasswordManager extends RawPasswordManager {
       passwords.map((slug, password) =>
           MapEntry(parseSlug(slug), parsePassword(password)));
 
+  Set<Token> parseTokens(Iterable<String> tokens) =>
+      tokens.map((token) => parseToken(token)).toSet();
+
   String _insertConvenienceDelimiters(String string) {
     final buffer = StringBuffer();
 

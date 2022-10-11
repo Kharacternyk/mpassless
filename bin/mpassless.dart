@@ -14,7 +14,7 @@ void main(List<String> arguments) {
 
 void generateTokens(int number) {
   final manager = PasswordManager.v1();
-  final passwords = <Slug, Password>{};
+  final passwords = manager.parsePasswords({});
 
   for (;;) {
     final slug = stdin.readLineSync();
@@ -49,8 +49,8 @@ void generateTokens(int number) {
 
 void restorePassword(String slug) {
   final manager = PasswordManager.v1();
-  final passwords = <Slug, Password>{};
-  final tokens = <Token>{};
+  final passwords = manager.parsePasswords({});
+  final tokens = manager.parseTokens([]);
 
   for (;;) {
     final slug = stdin.readLineSync();

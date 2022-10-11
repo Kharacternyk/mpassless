@@ -6,13 +6,13 @@ void main(List<String> arguments) {
   final argument = arguments[1];
 
   if (mode == 'generate') {
-    generateSecrets(int.parse(argument));
+    generateTokens(int.parse(argument));
   } else {
     restorePassword(argument);
   }
 }
 
-void generateSecrets(int number) {
+void generateTokens(int number) {
   final manager = PasswordManager.v1();
   final passwords = <Slug, Password>{};
 
@@ -42,7 +42,7 @@ void generateSecrets(int number) {
     passwords[manager.parseSlug(slug)] = manager.parsePassword(password);
   }
 
-  for (final secret in manager.generateSecrets(passwords, number)) {
+  for (final secret in manager.generateTokens(passwords, number)) {
     stdout.writeln(secret);
   }
 }
@@ -50,7 +50,7 @@ void generateSecrets(int number) {
 void restorePassword(String slug) {
   final manager = PasswordManager.v1();
   final passwords = <Slug, Password>{};
-  final secrets = <Secret>{};
+  final tokens = <Token>{};
 
   for (;;) {
     final slug = stdin.readLineSync();
@@ -79,15 +79,15 @@ void restorePassword(String slug) {
   }
 
   for (;;) {
-    final secret = stdin.readLineSync();
+    final token = stdin.readLineSync();
 
-    if (secret == null || secret.isEmpty) {
+    if (token == null || token.isEmpty) {
       break;
     }
 
-    secrets.add(Secret.fromString(secret));
+    tokens.add(manager.parseToken(token));
   }
 
   stdout.writeln(
-      manager.restorePassword(manager.parseSlug(slug), passwords, secrets));
+      manager.restorePassword(manager.parseSlug(slug), passwords, tokens));
 }

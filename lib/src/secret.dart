@@ -4,9 +4,11 @@ import 'invalid_characters_exception.dart';
 import 'invalid_length_exception.dart';
 
 class Secret {
-  static const delimiter = '-';
-  static final asciiSet = AsciiSet.lowerCaseLetters;
-  static final _bijection = StringIntegerBijection(asciiSet.codeUnits);
+  static const _delimiter = '-';
+  static const _convenienceDelimiter = '.';
+  static const _convenienceDelimiterPeriod = 5;
+  static final _asciiSet = AsciiSet.lowerCaseLetters;
+  static final _bijection = StringIntegerBijection(_asciiSet.codeUnits);
 
   final BigInt salt;
   final BigInt x;
@@ -14,14 +16,17 @@ class Secret {
 
   Secret(this.salt, this.x, this.y);
   factory Secret.fromString(String string) {
-    final chunks = string.split(delimiter);
+    final chunks = string
+        .split(_delimiter)
+        .map((string) => string.replaceAll(_convenienceDelimiter, ''))
+        .toList();
 
     if (chunks.length != 3) {
       //FIXME
       throw InvalidLengthException(0);
     }
-    if (!chunks.every(asciiSet.enoughFor)) {
-      throw InvalidCharactersException(asciiSet);
+    if (!chunks.every(_asciiSet.enoughFor)) {
+      throw InvalidCharactersException(_asciiSet);
     }
 
     final salt = _bijection.mapToInteger(chunks[0]);
@@ -32,7 +37,20 @@ class Secret {
   }
 
   @override
-  String toString() => "${_bijection.mapToString(salt)}$delimiter"
-      "${_bijection.mapToString(x)}$delimiter"
-      "${_bijection.mapToString(y)}";
+  String toString() => "${_bijection.mapToString(salt)}$_delimiter"
+      "${_bijection.mapToString(x)}$_delimiter"
+      "${_insertConvenienceDelimiters(_bijection.mapToString(y))}";
+
+  static String _insertConvenienceDelimiters(String string) {
+    final buffer = StringBuffer();
+
+    for (var i = 0; i < string.length; ++i) {
+      if (i > 0 && i % _convenienceDelimiterPeriod == 0) {
+        buffer.write(_convenienceDelimiter);
+      }
+      buffer.write(string[i]);
+    }
+
+    return buffer.toString();
+  }
 }

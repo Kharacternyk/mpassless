@@ -91,7 +91,7 @@ class PasswordManager {
   Password parsePassword(String password) {
     final value = _passwordBijection.mapToInteger(password);
 
-    if (value > _modulus) {
+    if (value >= _modulus) {
       throw TooLongException();
     }
 
@@ -101,7 +101,7 @@ class PasswordManager {
   Slug parseSlug(String slug) {
     final value = _slugBijection.mapToInteger(slug);
 
-    if (value > _modulus) {
+    if (value >= _modulus) {
       throw TooLongException();
     }
 
@@ -125,7 +125,7 @@ class PasswordManager {
     final x = _tokenBijection.mapToInteger(chunks[1]);
     final y = _tokenBijection.mapToInteger(chunks[2]);
 
-    if ([x, y].any((integer) => integer > _modulus)) {
+    if ([x, y].any((integer) => integer >= _modulus)) {
       throw TooLongException();
     }
 
@@ -185,8 +185,8 @@ class PasswordManager {
       passwords.map((slug, password) => MapEntry(slug._value, password._value));
 
   Map<BigInt, BigInt> _getSlowPoints(Map<BigInt, BigInt> points, salt) =>
-      points.map((x, y) =>
-          MapEntry(_modulus - x, _slowIntegerMapping.map(y, salt, _modulus)));
+      points.map((x, y) => MapEntry(_modulus - x - BigInt.one,
+          _slowIntegerMapping.map(y, salt, _modulus)));
 
   String _stringifyToken(Token token) {
     return [token._salt, token._x, token._y]

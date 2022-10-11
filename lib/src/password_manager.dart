@@ -114,9 +114,6 @@ class PasswordManager extends RawPasswordManager {
     if (chunks.length != 3) {
       throw MalformedTokenException();
     }
-    if (!chunks.every(tokenCharacters.enoughFor)) {
-      throw InvalidCharactersException();
-    }
 
     final salt = _tokenBijection.mapToInteger(chunks[0]);
     final x = _tokenBijection.mapToInteger(chunks[1]);

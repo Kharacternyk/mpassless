@@ -8,7 +8,7 @@ class SlowIntegerMapping {
   final int _iterationCount;
 
   SlowIntegerMapping(this._usedKiBCount, this._iterationCount) {
-    if (_usedKiBCount <= 0) {
+    if (_usedKiBCount <= 1) {
       throw ArgumentError.value(_usedKiBCount);
     }
     if (_iterationCount <= 0) {

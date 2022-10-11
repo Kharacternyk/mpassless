@@ -1,7 +1,6 @@
 import 'string_integer_bijection.dart';
 import 'ascii_set.dart';
-import 'invalid_characters_exception.dart';
-import 'invalid_length_exception.dart';
+import 'exceptions.dart';
 
 class Secret {
   static const _delimiter = '-';
@@ -22,11 +21,10 @@ class Secret {
         .toList();
 
     if (chunks.length != 3) {
-      //FIXME
-      throw InvalidLengthException(0);
+      throw MalformedSecretException();
     }
     if (!chunks.every(_asciiSet.enoughFor)) {
-      throw InvalidCharactersException(_asciiSet);
+      throw InvalidCharactersException();
     }
 
     final salt = _bijection.mapToInteger(chunks[0]);

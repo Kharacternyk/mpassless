@@ -2,49 +2,35 @@ import 'polynomial.dart';
 import 'string_integer_bijection.dart';
 import 'ascii_set.dart';
 import 'secret.dart';
-import 'invalid_characters_exception.dart';
-import 'incompatible_secrets_exception.dart';
+import 'exceptions.dart';
 import 'slow_integer_mapping.dart';
 
-abstract class PasswordManagerTiedValue {
-  final PasswordManager _manager;
-  final String value;
-
-  PasswordManagerTiedValue._(this.value, this._manager);
-
-  String get _name;
+class Password {
+  final BigInt value;
+  Password._(this.value);
 }
 
-class Password extends PasswordManagerTiedValue {
-  Password._(String value, PasswordManager manager) : super._(value, manager);
-
-  @override
-  String get _name => 'Password';
-}
-
-class Slug extends PasswordManagerTiedValue {
-  Slug._(String value, PasswordManager manager) : super._(value, manager);
-
-  @override
-  String get _name => 'Slug';
+class Slug {
+  final BigInt value;
+  Slug._(this.value);
 }
 
 class PasswordManager {
-  final AsciiSet _slugCharacters;
-  final AsciiSet _passwordCharacters;
+  final AsciiSet slugCharacters;
+  final AsciiSet passwordCharacters;
   final SlowIntegerMapping _slowIntegerMapping;
   final BigInt _modulus;
   final StringIntegerBijection _slugBijection;
   final StringIntegerBijection _passwordBijection;
 
   PasswordManager._(
-    this._slugCharacters,
-    this._passwordCharacters,
+    this.slugCharacters,
+    this.passwordCharacters,
     this._slowIntegerMapping,
     this._modulus,
-  )   : _slugBijection = StringIntegerBijection(_slugCharacters.codeUnits),
+  )   : _slugBijection = StringIntegerBijection(slugCharacters.codeUnits),
         _passwordBijection =
-            StringIntegerBijection(_passwordCharacters.codeUnits);
+            StringIntegerBijection(passwordCharacters.codeUnits);
 
   factory PasswordManager.v1(
       {AsciiSet? slugCharacters,
@@ -62,28 +48,33 @@ class PasswordManager {
   }
 
   Password parsePassword(String password) {
-    if (!_passwordCharacters.enoughFor(password)) {
-      throw InvalidCharactersException(_passwordCharacters);
+    final value = _passwordBijection.mapToInteger(password);
+
+    if (value > _modulus) {
+      throw TooLongException();
     }
-    //TODO check for length here
-    return Password._(password, this);
+
+    return Password._(value);
   }
 
   Slug parseSlug(String slug) {
-    if (!_slugCharacters.enoughFor(slug)) {
-      throw InvalidCharactersException(_slugCharacters);
+    final value = _passwordBijection.mapToInteger(slug);
+
+    if (value > _modulus) {
+      throw TooLongException();
     }
-    //TODO check for length here
-    return Slug._(slug, this);
+
+    return Slug._(value);
   }
+
+  Map<Slug, Password> parsePasswords(Map<String, String> passwords) =>
+      passwords.map((slug, password) =>
+          MapEntry(parseSlug(slug), parsePassword(password)));
 
   Set<Secret> generateSecrets(Map<Slug, Password> passwords, int number) {
     if (number <= 1) {
       throw ArgumentError.value(number);
     }
-
-    passwords.keys.forEach(_throwIfNotOwn);
-    passwords.values.forEach(_throwIfNotOwn);
 
     final salt = _slowIntegerMapping.generateSecureSalt();
     final integerPasswords = _getIntegerPoints(passwords);
@@ -109,10 +100,6 @@ class PasswordManager {
 
   String restorePassword(
       Slug slug, Map<Slug, Password> knownPasswords, Set<Secret> secrets) {
-    knownPasswords.keys.forEach(_throwIfNotOwn);
-    knownPasswords.values.forEach(_throwIfNotOwn);
-    _throwIfNotOwn(slug);
-
     final salts = List.from(secrets.map((secret) => secret.salt));
 
     if ({...salts}.length > 1) {
@@ -126,25 +113,13 @@ class PasswordManager {
       for (final secret in secrets) secret.x: secret.y
     });
 
-    return _passwordBijection
-        .mapToString(polynomial[_slugBijection.mapToInteger(slug.value)]);
+    return _passwordBijection.mapToString(polynomial[slug.value]);
   }
 
-  Map<BigInt, BigInt> _getIntegerPoints(Map<Slug, Password> passwords) => {
-        for (final slug in passwords.keys)
-          _slugBijection.mapToInteger(slug.value):
-              _passwordBijection.mapToInteger(passwords[slug]!.value)
-      };
+  Map<BigInt, BigInt> _getIntegerPoints(Map<Slug, Password> passwords) =>
+      passwords.map((slug, password) => MapEntry(slug.value, password.value));
 
-  Map<BigInt, BigInt> _getSlowPoints(Map<BigInt, BigInt> points, salt) => {
-        for (final x in points.keys)
-          _modulus - x: _slowIntegerMapping.map(points[x]!, salt, _modulus)
-      };
-
-  void _throwIfNotOwn(PasswordManagerTiedValue value) {
-    if (value._manager != this) {
-      throw ArgumentError(
-          '$value._name can only be passed to the password manager that parsed it');
-    }
-  }
+  Map<BigInt, BigInt> _getSlowPoints(Map<BigInt, BigInt> points, salt) =>
+      points.map((x, y) =>
+          MapEntry(_modulus - x, _slowIntegerMapping.map(y, salt, _modulus)));
 }

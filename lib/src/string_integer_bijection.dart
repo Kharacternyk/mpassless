@@ -1,3 +1,5 @@
+import 'exceptions.dart';
+
 class StringIntegerBijection {
   final List<int> _codeUnits;
   final Map<int, int> _codeUnitToIndexMap;
@@ -27,7 +29,11 @@ class StringIntegerBijection {
     var rest = BigInt.zero;
 
     for (var power = 0; power < string.length; ++power) {
-      final register = _codeUnitToIndexMap[string.codeUnitAt(power)]!;
+      final register = _codeUnitToIndexMap[string.codeUnitAt(power)];
+
+      if (register == null) {
+        throw InvalidCharactersException();
+      }
 
       rest *= BigInt.from(_codeUnits.length);
       rest += BigInt.from(register);

@@ -8,24 +8,23 @@ void main() {
     final manager =
         PasswordManager.v1(slowIntegerMapping: SlowIntegerMapping(2, 1));
     final rememberedPasswords = {
-      manager.parseSlug('github.com'): manager.parsePassword('OctoCat42(~.~)'),
-      manager.parseSlug('archlinux.org'):
-          manager.parsePassword('correct horse battery staple'),
+      'github.com': 'OctoCat42(~.~)',
+      'archlinux.org': 'correct horse battery staple',
     };
     final forgottenPasswords = {
-      manager.parseSlug('tutanota.com'):
-          manager.parsePassword('yEuH5nstN2ufXudJDCtEYWmD'),
-      manager.parseSlug('laptop'): manager.parsePassword(''),
+      'tutanota.com': 'yEuH5nstN2ufXudJDCtEYWmD',
+      'laptop': '',
     };
-    final secrets = manager.generateSecrets(
-        {...rememberedPasswords, ...forgottenPasswords},
-        forgottenPasswords.length * 2);
+    final secrets = manager.generateSecrets({
+      ...manager.parsePasswords(rememberedPasswords),
+      ...manager.parsePasswords(forgottenPasswords)
+    }, forgottenPasswords.length * 2);
 
     for (final forgottenPasswordSlug in forgottenPasswords.keys) {
       expect(
-          manager.restorePassword(
-              forgottenPasswordSlug, rememberedPasswords, secrets),
-          forgottenPasswords[forgottenPasswordSlug]!.value);
+          manager.restorePassword(manager.parseSlug(forgottenPasswordSlug),
+              manager.parsePasswords(rememberedPasswords), secrets),
+          forgottenPasswords[forgottenPasswordSlug]);
     }
   });
 }

@@ -58,7 +58,7 @@ class PasswordManager {
   }
 
   Slug parseSlug(String slug) {
-    final value = _passwordBijection.mapToInteger(slug);
+    final value = _slugBijection.mapToInteger(slug);
 
     if (value > _modulus) {
       throw TooLongException();

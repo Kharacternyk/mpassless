@@ -4,15 +4,16 @@ class BytesIntegerBijection {
   static final _big256 = BigInt.two.pow(8);
   final int byteCount;
 
-  BytesIntegerBijection(this.byteCount) {
-    assert(byteCount > 0);
-  }
+  BytesIntegerBijection(this.byteCount) : assert(byteCount > 0);
 
   Uint8List mapToBytes(BigInt integer) {
-    final integerByteSize = (integer.bitLength / 8).ceil();
-    final unpaddedReversedList = <int>[];
+    assert(integer >= BigInt.zero);
 
-    assert(integer >= BigInt.zero && integerByteSize <= byteCount);
+    final integerByteSize = (integer.bitLength / 8).ceil();
+
+    assert(integerByteSize <= byteCount);
+
+    final unpaddedReversedList = <int>[];
 
     while (integer > BigInt.zero) {
       unpaddedReversedList.add((integer % _big256).toInt());
